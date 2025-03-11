@@ -44,3 +44,19 @@ stages:
       hash: md5
       md5: 6e4dcf1205bbd06a6311190239f9e2f3
       size: 131109
+  impute_missing_values:
+    cmd: python src/data/impute_missing_values.py
+    deps:
+    - path: data/processed/outlier_remove.csv
+      hash: md5
+      md5: 6e4dcf1205bbd06a6311190239f9e2f3
+      size: 131109
+    - path: src/data/impute_missing_values.py
+      hash: md5
+      md5: f1329abf46b94dc4ab134969805efb1d
+      size: 4617
+    outs:
+    - path: data/processed/imputed_data.csv
+      hash: md5
+      md5: c907e96608a91351dd4b36d324e01b61
+      size: 131550

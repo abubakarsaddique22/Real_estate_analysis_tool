@@ -19,3 +19,10 @@ stages:
     - src/data/outlier.py
     outs:
     - data/processed/outlier_remove.csv
+  impute_missing_values:
+    cmd: python src/data/impute_missing_values.py
+    deps:
+    - data/processed/outlier_remove.csv
+    - src/data/impute_missing_values.py
+    outs:
+    - data/processed/imputed_data.csv
