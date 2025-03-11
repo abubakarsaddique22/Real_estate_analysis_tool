@@ -5,3 +5,10 @@ stages:
     - src/data/data_ingestion.py
     outs:
     - data/raw/data_version_1.csv
+  data_preprocessing:
+    cmd: python src/data/data_preprocessing.py
+    deps:
+    - data/raw/data_version_1.csv
+    - src/data/data_preprocessing.py
+    outs:
+    - data/processed/data_version_preprocessed.csv
