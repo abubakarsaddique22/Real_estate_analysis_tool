@@ -26,3 +26,10 @@ stages:
     - src/data/impute_missing_values.py
     outs:
     - data/processed/imputed_data.csv
+  build_features:
+    cmd: python src/features/build_features.py
+    deps:
+    - data/processed/outlier_remove.csv
+    - src/features/build_features.py
+    outs:
+    - data/processed/feature_selection.csv

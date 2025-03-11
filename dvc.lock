@@ -60,3 +60,19 @@ stages:
       hash: md5
       md5: c907e96608a91351dd4b36d324e01b61
       size: 131550
+  build_features:
+    cmd: python src/features/build_features.py
+    deps:
+    - path: data/processed/outlier_remove.csv
+      hash: md5
+      md5: 6e4dcf1205bbd06a6311190239f9e2f3
+      size: 131109
+    - path: src/features/build_features.py
+      hash: md5
+      md5: 50ab7626cc8307a44875f9f1be372e87
+      size: 3586
+    outs:
+    - path: data/processed/feature_selection.csv
+      hash: md5
+      md5: bdea4c76489676024041c331497f5e34
+      size: 47277
