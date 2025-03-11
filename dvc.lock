@@ -28,3 +28,19 @@ stages:
       hash: md5
       md5: 0e25bd72929a8f403fba70fc6c867357
       size: 237176
+  outlier:
+    cmd: python src/data/outlier.py
+    deps:
+    - path: data/processed/data_version_preprocessed.csv
+      hash: md5
+      md5: 0e25bd72929a8f403fba70fc6c867357
+      size: 237176
+    - path: src/data/outlier.py
+      hash: md5
+      md5: 7d4cc0321dc5730d9f1b65bc44659ab5
+      size: 7407
+    outs:
+    - path: data/processed/outlier_remove.csv
+      hash: md5
+      md5: 6e4dcf1205bbd06a6311190239f9e2f3
+      size: 131109

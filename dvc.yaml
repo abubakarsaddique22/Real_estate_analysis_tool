@@ -12,3 +12,10 @@ stages:
     - src/data/data_preprocessing.py
     outs:
     - data/processed/data_version_preprocessed.csv
+  outlier:
+    cmd: python src/data/outlier.py
+    deps:
+    - data/processed/data_version_preprocessed.csv
+    - src/data/outlier.py
+    outs:
+    - data/processed/outlier_remove.csv
