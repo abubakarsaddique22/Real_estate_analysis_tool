@@ -107,6 +107,22 @@ def main():
         df = pd.read_csv('data/processed/outlier_remove.csv')
 
         # Load and clean data
+        """
+        just drop the column becuase I already identify which columns important using these 
+        technique and these code in notebook that notebook name feature_selection.ipynb
+
+        Here are the feature selection techniques used in code:
+        Correlation-Based Feature Selection
+        Random Forest Feature Importance
+        Gradient Boosting Feature Importance
+        Permutation Feature Importance
+        LASSO Regression Feature Selection
+        Recursive Feature Elimination (RFE)
+        Linear Regression Coefficients
+        SHAP (SHapley Additive Explanations) Feature Importance
+        RFE--> it is tree model and most importand technique for feature importance
+        
+        """
         df=drop_columns(df,['society','price_per_sqft','Location','area_room_ratio','Purpose'])
 
         # Encode categorical features
