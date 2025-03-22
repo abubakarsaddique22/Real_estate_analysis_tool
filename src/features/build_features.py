@@ -3,11 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.inspection import permutation_importance
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import Lasso, LinearRegression
-from sklearn.model_selection import train_test_split, cross_val_score
+
 # import shap
 from typing import Tuple
 import logging
@@ -18,7 +14,7 @@ import logging
 import yaml
 
 # Logging configuration
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('build_features')
 logger.setLevel(logging.DEBUG)  # Capture all levels but only store errors
 
 # File handler (captures ERROR and above)
@@ -104,7 +100,7 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     try:
-        df = pd.read_csv('data/processed/outlier_remove.csv')
+        df = pd.read_csv('data/processed/imputed_data.csv')
 
         # Load and clean data
         """

@@ -29,7 +29,21 @@ stages:
   build_features:
     cmd: python src/features/build_features.py
     deps:
-    - data/processed/outlier_remove.csv
+    - data/processed/imputed_data.csv
     - src/features/build_features.py
     outs:
     - data/processed/feature_selection.csv
+  train_model:
+    cmd: python src/model/train_model.py
+    deps:
+    - data/processed/feature_selection.csv
+    - src/model/train_model.py
+    outs:
+    - models/model.pkl
+  predict_model:
+    cmd: python src/model/predict_model.py
+    deps:
+    - models/model.pkl
+    - src/model/predict_model.py
+    outs:
+    - reports/metrics.json

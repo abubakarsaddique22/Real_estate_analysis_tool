@@ -8,7 +8,7 @@ import logging
 import yaml
 
 # Logging configuration
-logger = logging.getLogger('impute_and_outlier')
+logger = logging.getLogger('impute_missing_values')
 logger.setLevel(logging.DEBUG)  # Capture all levels but only store errors
 
 # File handler (captures ERROR and above)

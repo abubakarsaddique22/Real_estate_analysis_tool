@@ -21,8 +21,8 @@ stages:
       size: 1391074
     - path: src/data/data_preprocessing.py
       hash: md5
-      md5: cce8099f18594d90d36253dc7c98c754
-      size: 10743
+      md5: 3a1dd8673f85d576c5e389bd5f61f29d
+      size: 10747
     outs:
     - path: data/processed/data_version_preprocessed.csv
       hash: md5
@@ -37,8 +37,8 @@ stages:
       size: 237176
     - path: src/data/outlier.py
       hash: md5
-      md5: 7d4cc0321dc5730d9f1b65bc44659ab5
-      size: 7407
+      md5: 7da1f2a7dba62039742cdd760564b9b3
+      size: 7396
     outs:
     - path: data/processed/outlier_remove.csv
       hash: md5
@@ -53,8 +53,8 @@ stages:
       size: 131109
     - path: src/data/impute_missing_values.py
       hash: md5
-      md5: f1329abf46b94dc4ab134969805efb1d
-      size: 4617
+      md5: 7fd0744a6b2cd49e50429bd6936d35d6
+      size: 4620
     outs:
     - path: data/processed/imputed_data.csv
       hash: md5
@@ -63,16 +63,48 @@ stages:
   build_features:
     cmd: python src/features/build_features.py
     deps:
-    - path: data/processed/outlier_remove.csv
+    - path: data/processed/imputed_data.csv
       hash: md5
-      md5: 6e4dcf1205bbd06a6311190239f9e2f3
-      size: 131109
+      md5: c907e96608a91351dd4b36d324e01b61
+      size: 131550
     - path: src/features/build_features.py
       hash: md5
-      md5: 50ab7626cc8307a44875f9f1be372e87
-      size: 3586
+      md5: dab1223c63e94e96b276b7c86bf8868f
+      size: 4018
     outs:
     - path: data/processed/feature_selection.csv
       hash: md5
-      md5: bdea4c76489676024041c331497f5e34
-      size: 47277
+      md5: 18955ecabca04d205ec5d9a5acdf0ab2
+      size: 47475
+  train_model:
+    cmd: python src/model/train_model.py
+    deps:
+    - path: data/processed/feature_selection.csv
+      hash: md5
+      md5: 18955ecabca04d205ec5d9a5acdf0ab2
+      size: 47475
+    - path: src/model/train_model.py
+      hash: md5
+      md5: c1f7fba8ef82f8955aa16482b55c3ddd
+      size: 4872
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: f57f59785c2b3771a52b0f7d97b3345d
+      size: 133480
+  predict_model:
+    cmd: python src/model/predict_model.py
+    deps:
+    - path: models/model.pkl
+      hash: md5
+      md5: f57f59785c2b3771a52b0f7d97b3345d
+      size: 133480
+    - path: src/model/predict_model.py
+      hash: md5
+      md5: a0d7832003b3bcdd4d9497edebdbac97
+      size: 4053
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: 00ca8b96ee58d7bbd2526a9241445537
+      size: 135

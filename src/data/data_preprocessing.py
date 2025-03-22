@@ -15,7 +15,7 @@ import logging
 import yaml
 
 # Logging configuration
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('data_preprocessing')
 logger.setLevel(logging.DEBUG)  # Capture all levels but only store errors
 
 # File handler (captures ERROR and above)
