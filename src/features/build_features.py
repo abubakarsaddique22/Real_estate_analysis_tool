@@ -3,6 +3,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.compose import ColumnTransformer
 
 # import shap
 from typing import Tuple
@@ -87,7 +90,7 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: DataFrame with encoded categorical features.
     """
     try:
-        categorical_cols = df.select_dtypes(include=['object']).columns
+        categorical_cols = df.select_dtypes(include=['category']).columns
         for col in categorical_cols:
             oe = OrdinalEncoder()
             df[col] = oe.fit_transform(df[[col]])
@@ -95,6 +98,29 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
         return df
     except Exception as e:
         logging.error("Error encoding categorical features: %s", e)
+        raise
+
+
+def data_type_change(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Change the data types of specific columns in the DataFrame.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame.
+
+    Returns:
+        pd.DataFrame: DataFrame with updated data types.
+    """
+    try:
+        df['City'] = df['City'].astype('category')
+        df['property Type'] = df['property Type'].astype('category')
+        df['colony'] = df['colony'].astype('category')
+        df['province'] = df['province'].astype('category')
+        df['Parking Spaces'] = df['Parking Spaces'].astype('int')
+        df['Age Possession'] = df['Age Possession'].astype('category')
+        return df
+    except Exception as e:
+        logging.error("Error changing data types: %s", e)
         raise
 
 
@@ -120,10 +146,10 @@ def main():
         
         """
         df=drop_columns(df,['society','price_per_sqft','Location','area_room_ratio','Purpose'])
-
+        df=data_type_change(df)
         # Encode categorical features
-        df = encode_categorical_features(df)
-        
+        # df = create_encoding_pipeline(df,categorical_cols = ['property Type', 'City', 'colony', 'Age Possession', 'province'])
+        df=encode_categorical_features(df)
 
         # save data
         df.to_csv('data/processed/feature_selection.csv')

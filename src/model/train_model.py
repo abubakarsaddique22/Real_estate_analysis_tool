@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
-from sklearn.ensemble import GradientBoostingRegressor
+from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, cross_val_score
 import logging
 import warnings
@@ -81,6 +81,9 @@ def split_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
         Exception: For any other errors during data splitting.
     """
     try:
+        if 'Unnamed: 0' in df.columns:
+          X = df.drop(columns=['Unnamed: 0'])
+          
         X = df.drop("price", axis=1)
         y = df["price"]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -101,12 +104,12 @@ def split_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
         raise RuntimeError("Unexpected error while splitting data") from e
 
 
-def train_model(x_train: pd.DataFrame, y_train: pd.Series) -> GradientBoostingRegressor:
+def train_model(x_train: pd.DataFrame, y_train: pd.Series) -> XGBRegressor:
     """
-    Train a Gradient Boosting Regressor model.
+    Train a xgboost Regressor model.
     """
     try:
-        model = GradientBoostingRegressor()
+        model = XGBRegressor()
         model.fit(x_train, y_train)
         logger.info("Model trained successfully")
         return model
@@ -114,7 +117,7 @@ def train_model(x_train: pd.DataFrame, y_train: pd.Series) -> GradientBoostingRe
         logger.error("Error during model training: %s", e)
         raise
 
-def save_model(model: GradientBoostingRegressor, file_path: str) -> None:
+def save_model(model: XGBRegressor, file_path: str) -> None:
     """
     Save the trained model to a file using pickle.
     """
