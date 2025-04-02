@@ -77,37 +77,6 @@ def drop_columns(df: pd.DataFrame, columns:list) -> pd.DataFrame:
         raise
 
 
-def clean_price(df: pd.DataFrame, column) -> pd.DataFrame:
-    
-    """
-    Clean the price column.
-
-    Args:
-       column,df (DataFrame),: Input dataframe and column pass the price column
-
-    Returns:
-       pd.DataFrame: Valid price or NaN if invalid.
-    
-    """
-    
-    try:
-        if type(column) == float:
-            return column
-        else:
-            if column[2] == 'Lakh':
-                return round(float(column[1])/100, 2)
-            else:
-                return round(float(column[1]), 2)
-        logger.info('Price column cleaned successfully')
-        return df
-            
-    except KeyError as e:
-        logger.error('Column not found: %s', e)
-        raise
-    except Exception as e:
-        logger.error('Unexpected error: %s', e)
-        raise
-
 
 # Get the current year
 current_year: int = datetime.now().year
@@ -360,10 +329,11 @@ def main():
     try:
         # Load data
         df=pd.read_csv('data/raw/data_version_1.csv')    
-
-
-    #    # Clean the price column
-        df['price'] = df['price'].apply(lambda x: clean_price(df, x.split(' ')) if isinstance(x, str) else x)
+        # print(df.shape)
+        
+        # remove missing value in House Number columns 
+        # drop the row becuase Here row missing id,area,purpose
+        df.dropna(subset=['House Number'], inplace=True)
 
         # Apply cleaning and transformation
         df['Year'] = df['Year'].apply(clean_built_year)

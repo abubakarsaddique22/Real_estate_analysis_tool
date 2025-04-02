@@ -104,7 +104,7 @@ def preprocess_data(df:pd.DataFrame)->pd.DataFrame:
 
         # parking spaces
         df['Parking Spaces']=df['Main Features'].str.split('|').str.get(1).str.split(':').str.get(1)
-        df['Parking Spaces'].unique()
+        # df['Parking Spaces'].unique()
         df.drop(['Main Features'], axis=1, inplace=True)
 
 
@@ -131,7 +131,7 @@ def preprocess_data(df:pd.DataFrame)->pd.DataFrame:
         df['Store Rooms'] = df['Rooms'].apply(lambda x: extract_room_info(x, 'Store Rooms'))
 
         # Display the rows using sample and verify the data
-        df[['Bedrooms', 'Bathrooms', 'Servant Quarters', 'Kitchens','Store Rooms']].sample(10)
+        # df[['Bedrooms', 'Bathrooms', 'Servant Quarters', 'Kitchens','Store Rooms']].sample(10)
         # Drop the original column
         df.drop(['Rooms'], axis=1, inplace=True)
 
@@ -167,8 +167,18 @@ def preprocess_data(df:pd.DataFrame)->pd.DataFrame:
         df['price']=df['price'].str.replace("PKR",'')
         
         df['price'].str.split(' ').str.get(2)
-        logging.info("Data Preprocessed successfully")
-        return df 
+
+        def treat_price(x):
+            if type(x) == float:
+                return x
+            else:
+                if x[2] == 'Lakh':
+                    return round(float(x[1])/100,2)
+                else:
+                    return round(float(x[1]),2)
+        
+        df['price'] = df['price'].str.split(' ').apply(treat_price)
+        
     except Exception as e:
         logging.error("Error Preprocessing data: %s", e)
         raise

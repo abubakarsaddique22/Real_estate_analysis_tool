@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import OrdinalEncoder, StandardScaler
+from sklearn.preprocessing import OrdinalEncoder, StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.compose import ColumnTransformer
+import pickle
+
 
 # import shap
 from typing import Tuple
@@ -78,7 +79,7 @@ def drop_columns(df: pd.DataFrame, columns:list) -> pd.DataFrame:
         logger.error('Unexpected error: %s', e)
         raise
 
-def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
+# def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
 
     """
     Encodes categorical features using OrdinalEncoder.
@@ -99,6 +100,47 @@ def encode_categorical_features(df: pd.DataFrame) -> pd.DataFrame:
     except Exception as e:
         logging.error("Error encoding categorical features: %s", e)
         raise
+
+
+def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Apply preprocessing to the dataset using a pipeline."""
+    try:
+        numeric_features = ['Parking Spaces', 'Bedrooms', 'Bathrooms', 'Servant Quarters', 'Kitchens', 'Store Rooms', 'area']
+        categorical_ordinal_features = ['property Type']
+        categorical_onehot_features = ['Age Possession','colony','province','City']
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', StandardScaler(), numeric_features),
+                ('cat', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1), categorical_ordinal_features),
+                ('cat1', OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore'), categorical_onehot_features)
+            ],
+            remainder='passthrough'  # Keeps other columns like 'price'
+        )
+
+        pipeline = Pipeline([('preprocessor', preprocessor)])
+
+        # Fit and transform the data
+        df_transformed = pipeline.fit_transform(df)
+
+        # Extract column names dynamically
+        onehot_feature_names = pipeline.named_steps['preprocessor'].named_transformers_['cat1'].get_feature_names_out(categorical_onehot_features)
+
+        # Get original columns that were passed through
+        passthrough_columns = [col for col in df.columns if col not in (numeric_features + categorical_ordinal_features + categorical_onehot_features)]
+
+        # Create final column names
+        transformed_columns = numeric_features + categorical_ordinal_features + list(onehot_feature_names) + passthrough_columns
+
+        # Convert to DataFrame with correct columns
+        df_transformed = pd.DataFrame(df_transformed, columns=transformed_columns)
+
+        return df_transformed
+
+    except Exception as e:
+        logger.error("Error in preprocessing data: %s", e)
+        raise
+
 
 
 def data_type_change(df: pd.DataFrame) -> pd.DataFrame:
@@ -127,37 +169,42 @@ def data_type_change(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     try:
         df = pd.read_csv('data/processed/imputed_data.csv')
-
+        print(df.shape)
         # Load and clean data
-        """
-        just drop the column becuase I already identify which columns important using these 
-        technique and these code in notebook that notebook name feature_selection.ipynb
+    #     """
+    #     just drop the column becuase I already identify which columns important using these 
+    #     technique and these code in notebook that notebook name feature_selection.ipynb
 
-        Here are the feature selection techniques used in code:
-        Correlation-Based Feature Selection
-        Random Forest Feature Importance
-        Gradient Boosting Feature Importance
-        Permutation Feature Importance
-        LASSO Regression Feature Selection
-        Recursive Feature Elimination (RFE)
-        Linear Regression Coefficients
-        SHAP (SHapley Additive Explanations) Feature Importance
-        RFE--> it is tree model and most importand technique for feature importance
+    #     Here are the feature selection techniques used in code:
+    #     Correlation-Based Feature Selection
+    #     Random Forest Feature Importance
+    #     Gradient Boosting Feature Importance
+    #     Permutation Feature Importance
+    #     LASSO Regression Feature Selection
+    #     Recursive Feature Elimination (RFE)
+    #     Linear Regression Coefficients
+    #     SHAP (SHapley Additive Explanations) Feature Importance
+    #     RFE--> it is tree model and most importand technique for feature importance
         
-        """
+    #     """
         df=drop_columns(df,['society','price_per_sqft','Location','area_room_ratio','Purpose'])
+
+        # just upper and lower case in property type column covert to Houses 
+        df['property Type'].replace({'Upper':"Houses",'Lower':"Houses"},inplace=True)
+        print(df['property Type'].value_counts())
         df=data_type_change(df)
-        # Encode categorical features
-        # df = create_encoding_pipeline(df,categorical_cols = ['property Type', 'City', 'colony', 'Age Possession', 'province'])
-        df=encode_categorical_features(df)
-
-        # save data
-        df.to_csv('data/processed/feature_selection.csv')
-
+       
+        preprocessor = preprocess_data(df)
+        print(df.shape)
+        with open('preprocessor.pkl', 'wb') as f:
+            pickle.dump(preprocessor, f)
+    #     # save data
+        preprocessor.to_csv('data/processed/feature_selection.csv',index=False)
 
     except Exception as e:
         logging.error("Error in main function: %s", e)
         raise
+    # Get transformed data and preprocesso
 
 if __name__ == '__main__':
     main()

@@ -62,7 +62,7 @@ def impute_parking_spaces(df: pd.DataFrame) -> pd.DataFrame:
     
     try:
 
-        df['Parking Spaces'].fillna(df['Parking Spaces'].median(), inplace=True)
+        df['Parking Spaces']=df['Parking Spaces'].fillna(df['Parking Spaces'].median())
         return df
     except Exception as e:
         logger.error("Error in impute_parking_spaces: %s", e)
@@ -109,32 +109,25 @@ def main():
     try:
         # Load dataset
         df = pd.read_csv('data/processed/outlier_remove.csv')
+        print(df.shape)
 
 
-        # Impute missing parking spaces
+    #     # Impute missing parking spaces
         df = impute_parking_spaces(df)
-
-        # Compute median price for medium area (1500 - 2500 sq ft)
+    #     # Compute median price for medium area (1500 - 2500 sq ft)
         median_price_medium_area = df[(df["area"] > 1500) & (df["area"] <= 2500)]["price"].median()
 
-        # Apply property type imputation
+    #     # Apply property type imputation
         df["property Type"] = df.apply(lambda row: impute_missing_property_type(row, median_price_medium_area), axis=1)
-
-        # Most frequent city (for fallback)
+    #     # Most frequent city (for fallback)
         most_common_city = df["City"].mode()[0]
 
-        # Apply city imputation
+    #     # Apply city imputation
         df["City"] = df.apply(lambda row: impute_city(row, most_common_city), axis=1)
-
-        # Save the updated DataFrame
+    #     # Save the updated DataFrame
         df.to_csv('data/processed/imputed_data.csv', index=False)
 
         logger.info("Imputation process completed successfully.")
-
-        # print(df["property Type"].value_counts())
-        # print(df["City"].value_counts())
-        # print(df.isnull().sum())
-
     except Exception as e:
         logger.error("Error occurred during main execution: %s", e)
         raise

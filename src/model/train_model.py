@@ -2,12 +2,14 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
 import logging
 import warnings
 import yaml
 import pickle
 import os 
+from typing import Tuple
+from sklearn.model_selection import train_test_split
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
@@ -59,10 +61,6 @@ def load_data(file_path: str) -> pd.DataFrame:
         logger.error("Error loading data: %s", e)
         raise
 
-import pandas as pd
-import os
-from typing import Tuple
-from sklearn.model_selection import train_test_split
 
 def split_data(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
     """
@@ -110,6 +108,13 @@ def train_model(x_train: pd.DataFrame, y_train: pd.Series) -> XGBRegressor:
     """
     try:
         model = XGBRegressor()
+         # K-Fold Cross-Validation (on training set only)
+        kfold = KFold(n_splits=10, shuffle=True, random_state=42)
+        scores = cross_val_score(model, x_train, y_train, cv=kfold, scoring='r2')
+
+        logger.info(f"Mean R² Score (Training Set): {scores.mean():.4f}")
+        print(f"Mean R² Score (Training Set): {scores.mean():.4f}")
+
         model.fit(x_train, y_train)
         logger.info("Model trained successfully")
         return model
@@ -136,6 +141,7 @@ def main() -> None:
     """
     try:
         data = load_data("data/processed/feature_selection.csv")
+        print(data.shape)
         x_train, y_train = split_data(data)
         model = train_model(x_train, y_train)
         save_model(model, "models/model.pkl")

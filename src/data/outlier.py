@@ -93,6 +93,7 @@ def outlier_price_per_sqft(df: pd.DataFrame) -> pd.DataFrame:
         outliers_sqft['price_per_sqft'] = round((outliers_sqft['price'] * 10000000) / outliers_sqft['area'])
 
         df.update(outliers_sqft)
+        df=df[df['price_per_sqft']<=40000]
         return df
     except Exception as e:
         logger.error("Error in outlier_price_per_sqft: %s", e)
@@ -116,7 +117,9 @@ def outlier_area(df: pd.DataFrame) -> pd.DataFrame:
     """
         
     try:
-        return df[df['area'] <= 12000]
+        # return df[df['area'] <= 12000]
+        df=df[df['area']<=12000]
+        return df 
     except Exception as e:
         logger.error("Error in outlier_area: %s", e)
         raise
@@ -258,7 +261,7 @@ def parking_spaces_outlier(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     try:
         df = pd.read_csv('data/processed/data_version_preprocessed.csv')
-
+        print(df.shape)
         if df is None or df.empty:
             logger.error("Loaded DataFrame is empty.")
             raise ValueError("Loaded DataFrame is empty.")
@@ -270,6 +273,7 @@ def main():
         df = kitchen_outlier(df)
         df = Area_with_bedroom_outlier(df)
         df = parking_spaces_outlier(df)
+        print(df.shape)
 
         df.to_csv('data/processed/outlier_remove.csv', index=False)
         logger.info("Outlier removal process completed successfully.")
