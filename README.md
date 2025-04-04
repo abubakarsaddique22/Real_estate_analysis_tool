@@ -1,7 +1,56 @@
 property_Analysis_tool
 ==============================
+# Real Estate Properties Analytic Tool
 
-It is analysis tool for real estate property
+## Project Overview
+This project provides a comprehensive solution for analyzing real estate properties, predicting property prices, and recommending properties based on user preferences. The tool includes three main modules:
+1. **Price Prediction** – Predicts property prices using machine learning models.
+2. **Analytics** – Provides insights into the real estate market with interactive visualizations.
+3. **Recommendation** – Recommends properties to users based on their preferences using content-based filtering.
+
+## Modules
+
+### 1. Price Prediction Module
+- **Description:**  
+  This module leverages machine learning algorithms, including XGBoost and other more Algorithm but after experiment I decided use XGBoost to predict property prices based on features such as the number of bedrooms, kitchens, and other property details.
+  
+- **Technologies Used:**  
+  - XGBoost and Feature Enginring technique
+
+### 2. Analytics Module
+- **Description:**  
+  Provides in-depth visual analysis of the real estate market, trends, and user preferences. The module uses interactive charts and graphs to explore relationships between property features and prices.
+  
+- **Technologies Used:**  
+  - Matplotlib, Seaborn, Plotly
+
+### 3. Recommendation Module
+- **Description:**  
+This module recommends real estate properties to users based on their input preferences using content-based filtering. The user provides specific details (e.g., property type, price range, colony etc), and the system returns the top 5 properties that match these criteria.
+  
+- **Technologies Used:**  
+  - Content-Based Filtering
+
+## Key Features
+- **Price Prediction:** Accurate property price predictions using machine learning models.
+- **Market Analytics:** Visualize trends, user preferences, and feature relationships through interactive graphs.
+- **Property Recommendations:** Personalized property recommendations based on content-based filtering.
+- **Data Preprocessing:** Includes steps like outlier removal and missing value imputation to ensure data quality.
+
+## Technologies Used
+- **Programming Languages:** Python, SQL
+- **Machine Learning Libraries:**  
+  - XGBoost, Gradient Boosting
+- **Data Visualization Tools:**  
+  - Matplotlib, Seaborn, Plotly
+- **Recommendation Systems:**  
+  - Content-Based Filtering
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/real-estate-analytics.git
+
 
 Project Organization
 ------------
