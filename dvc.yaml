@@ -33,17 +33,11 @@ stages:
     - src/features/build_features.py
     outs:
     - data/processed/feature_selection.csv
-  train_model:
-    cmd: python src/model/train_model.py
+  model_train_evaluate:
+    cmd: python src/model/model_train_evaluate.py
     deps:
     - data/processed/feature_selection.csv
-    - src/model/train_model.py
+    - src/model/model_train_evaluate.py
     outs:
     - models/model.pkl
-  predict_model:
-    cmd: python src/model/predict_model.py
-    deps:
-    - models/model.pkl
-    - src/model/predict_model.py
-    outs:
     - reports/metrics.json

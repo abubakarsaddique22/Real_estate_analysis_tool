@@ -325,7 +325,7 @@ def House_type(df: pd.DataFrame) -> pd.DataFrame:
 
 
 
-def main():
+def preprocessing_main():
     try:
         # Load data
         df=pd.read_csv('data/raw/data_version_1.csv')    
@@ -369,7 +369,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    preprocessing_main()
 
 
 

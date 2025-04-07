@@ -21,8 +21,8 @@ stages:
       size: 1381071
     - path: src/data/data_preprocessing.py
       hash: md5
-      md5: e17b55edadd27e50f94c0bacf0a233ef
-      size: 10001
+      md5: ecac591fa341193f8d79a3c949a09779
+      size: 10029
     outs:
     - path: data/processed/data_version_preprocessed.csv
       hash: md5
@@ -69,13 +69,13 @@ stages:
       size: 129947
     - path: src/features/build_features.py
       hash: md5
-      md5: 7f35be32e5778f864a10621bd45e2316
-      size: 7272
+      md5: b1b353199dd8bf9b134b5c3daa2c1b37
+      size: 5008
     outs:
     - path: data/processed/feature_selection.csv
       hash: md5
-      md5: 89ac9c4c577785bfbdaf368839b06608
-      size: 655509
+      md5: 1d18b5103075ebcb0cbbbc2c91c5e49d
+      size: 67288
   train_model:
     cmd: python src/model/train_model.py
     deps:
@@ -104,6 +104,26 @@ stages:
       md5: a0d7832003b3bcdd4d9497edebdbac97
       size: 4053
     outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: 9c8a9a78c7510e3b954426e8c3783d3b
+      size: 134
+  model_train_evaluate:
+    cmd: python src/model/model_train_evaluate.py
+    deps:
+    - path: data/processed/feature_selection.csv
+      hash: md5
+      md5: 1d18b5103075ebcb0cbbbc2c91c5e49d
+      size: 67288
+    - path: src/model/model_train_evaluate.py
+      hash: md5
+      md5: a67fcc9ca46bcb28a745e7e2a97d6991
+      size: 8811
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 13fe1d8f2e725b9aaafc9227a36225e6
+      size: 174920
     - path: reports/metrics.json
       hash: md5
       md5: 9c8a9a78c7510e3b954426e8c3783d3b
