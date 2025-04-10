@@ -28,7 +28,7 @@ except FileNotFoundError:
 
 st.header('Enter Your Property Details')
 
-st.dataframe(df)
+# st.dataframe(df)
 # User Inputs
 City = st.selectbox('City', sorted(df['City'].unique().tolist()))
 property_type = st.selectbox('Property Type', ['Flats', 'Houses'])
