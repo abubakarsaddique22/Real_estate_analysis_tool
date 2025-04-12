@@ -128,8 +128,19 @@ def create_pipeline() -> Pipeline:
         )
 
         model_pipeline  = Pipeline([('preprocessor', preprocessor),
-                             ('model', XGBRegressor())  # XGBoost Model
+                             ('model', XGBRegressor(min_child_weight=2, 
+                                                    n_estimators=899, 
+                                                    gamma=0.9717292730761442, 
+                                                    reg_alpha=3.3278429742954385, 
+                                                    learning_rate=0.054860581080248355, 
+                                                    max_depth=12, 
+                                                    reg_lambda=0.06187338470330408, 
+                                                    subsample=0.5923264145395795, 
+                                                    colsample_bytree=0.9139276831537941))  # XGBoost Model                        
+                             
                              ])
+        
+        
 
         return model_pipeline 
     except Exception as e:
@@ -179,12 +190,12 @@ def evaluate_model(model: Pipeline, X_test: pd.DataFrame, y_test: pd.Series) -> 
         y_pred = model.predict(X_test)
 
         mae = mean_absolute_error(y_test, y_pred)
-        mse = mean_squared_error(y_test, y_pred)
+        # mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
 
         metrics_dict = {
             "mean_absolute_error": mae,
-            "mean_squared_error": mse,
+            # "mean_squared_error": mse,
             "r2_score": r2
         }
 
@@ -244,8 +255,8 @@ def main():
     try:
         # Load the data
         data = load_data("data/processed/feature_selection.csv")
-        print(f"Data shape: {data.shape}")
-        print(data.columns)
+        # print(f"Data shape: {data.shape}")
+        # print(data.columns)
 
         # Split the data
         X_train, y_train, X_test, y_test = split_data(data)
