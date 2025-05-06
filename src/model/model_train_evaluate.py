@@ -192,14 +192,20 @@ def evaluate_model(model: Pipeline, X_test: pd.DataFrame, y_test: pd.Series) -> 
     try:
         y_pred = model.predict(X_test)
 
-        mae = mean_absolute_error(y_test, y_pred)
+        # mae = mean_absolute_error(y_test, y_pred)
         # mse = mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
+       # n = number of observations, k = number of predictors
+        n = len(y_test)
+        k = X_test.shape[1]
 
+        # Adjusted R²
+        adjusted_r2 = 1 - (1 - r2) * ((n - 1) / (n - k - 1))
         metrics_dict = {
-            "mean_absolute_error": mae,
+            # "mean_absolute_error": mae,
             # "mean_squared_error": mse,
-            "r2_score": r2
+            "r2_score": r2,
+            "adjusted_r2":adjusted_r2
         }
 
         logger.info("Model evaluation metrics calculated")
