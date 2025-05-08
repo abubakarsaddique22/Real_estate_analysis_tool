@@ -30,20 +30,20 @@ st.header('Enter Your Property Details')
 
 # st.dataframe(df)
 # User Inputs
-with st.form("recommend_form"):
-    City = st.selectbox('City', sorted(df['City'].unique().tolist()))
-    property_type = st.selectbox('Property Type', ['Flats', 'Houses'])
-    parking_spaces = st.selectbox('Parking Spaces', sorted(df['parking_spaces'].unique().tolist()))
-    Bedrooms = float(st.selectbox('Number of Bedrooms', sorted(df['Bedrooms'].unique().tolist())))
-    Bathrooms = float(st.selectbox('Number of Bathrooms', sorted(df['Bathrooms'].unique().tolist())))
-    servant_Quarters = st.selectbox('Servant Quarters', sorted(df['servant_Quarters'].unique().tolist()))
-    Kitchens = st.selectbox('Kitchens', sorted(df['Kitchens'].unique().tolist()))
-    store_rooms = st.selectbox('Store Rooms', sorted(df['store_rooms'].unique().tolist()))
-    age_possession = st.selectbox('Property Age', sorted(df['age_possession'].unique().tolist()))
-    area = float(st.number_input('Built Up Area (sqft)'))
-    colony = st.selectbox('Colony', sorted(df['colony'].unique().tolist()))
-    province = st.selectbox('Province', sorted(df['province'].unique().tolist()))
-    submit = st.form_submit_button("click predict button ⬇️")
+# with st.form("recommend_form"):
+City = st.selectbox('City', sorted(df['City'].unique().tolist()))
+property_type = st.selectbox('Property Type', ['Flats', 'Houses'])
+parking_spaces = st.selectbox('Parking Spaces', sorted(df['parking_spaces'].unique().tolist()))
+Bedrooms = float(st.selectbox('Number of Bedrooms', sorted(df['Bedrooms'].unique().tolist())))
+Bathrooms = float(st.selectbox('Number of Bathrooms', sorted(df['Bathrooms'].unique().tolist())))
+servant_Quarters = st.selectbox('Servant Quarters', sorted(df['servant_Quarters'].unique().tolist()))
+Kitchens = st.selectbox('Kitchens', sorted(df['Kitchens'].unique().tolist()))
+store_rooms = st.selectbox('Store Rooms', sorted(df['store_rooms'].unique().tolist()))
+age_possession = st.selectbox('Property Age', sorted(df['age_possession'].unique().tolist()))
+area = float(st.number_input('Built Up Area (sqft)'))
+colony = st.selectbox('Colony', sorted(df['colony'].unique().tolist()))
+province = st.selectbox('Province', sorted(df['province'].unique().tolist()))
+# submit = st.form_submit_button("click predict button ⬇️")
 
 if st.button('Predict'):
 
