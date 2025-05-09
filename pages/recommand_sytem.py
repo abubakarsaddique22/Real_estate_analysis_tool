@@ -1,18 +1,26 @@
 import streamlit as st
 import pandas as pd
+import pickle
 
 # Load and preprocess data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("data/processed/imputed_data.csv")
-    df = df.drop(columns=[
-        'price_per_sqft', 'area_room_ratio', 'Purpose', 'Location', 'province', 'society'
-    ])
+    # df = pd.read_csv("data/processed/imputed_data.csv")
+    # df = df.drop(columns=[
+    #     'price_per_sqft', 'area_room_ratio', 'Purpose', 'Location', 'province', 'society'
+    # ])
+    try:
+        with open('models/final_data.pkl', 'rb') as f:
+            df = pickle.load(f)  # Assuming it's a ColumnTransformer
+    except FileNotFoundError:
+        st.error("Preprocessor file not found. Ensure that 'models/preprocessor.pkl' exists.")
+        st.stop()
+
     return df
 
 # Content-based recommendation function
 def content_based_recommend(df, user_input, top_n=5):
-    filters = ['City', 'property Type', 'Age Possession', 'colony']
+    filters = ['City', 'property_type', 'age_possession', 'colony']
     df_filtered = df.copy()
 
     for i in range(len(filters) + 1):
@@ -34,8 +42,8 @@ df = load_data()
 
 # Dropdown options
 city_options = df['City'].dropna().unique().tolist()
-type_options = df['property Type'].dropna().unique().tolist()
-age_options = df['Age Possession'].dropna().unique().tolist()
+type_options = df['property_type'].dropna().unique().tolist()
+age_options = df['age_possession'].dropna().unique().tolist()
 colony_options = df['colony'].dropna().unique().tolist()
 
 # Title and input form
@@ -46,8 +54,8 @@ with st.form("recommend_form"):
 
     # User input fields
     city = st.selectbox("City", city_options)
-    property_type = st.selectbox("Property Type", type_options)
-    age_possession = st.selectbox("Age Possession", age_options)
+    property_type = st.selectbox("property_type", type_options)
+    age_possession = st.selectbox("age_possession", age_options)
     colony = st.selectbox("Colony", colony_options)
     price = st.number_input("Target Price (Millions)", min_value=0.1, value=3.0, step=0.1)
     area = st.number_input("Target Area (sqft)", min_value=100.0, value=1500.0, step=50.0)
@@ -58,8 +66,8 @@ with st.form("recommend_form"):
 if submit:
     user_input = {
         'City': city,
-        'property Type': property_type,
-        'Age Possession': age_possession,
+        'property_type': property_type,
+        'age_possession': age_possession,
         'colony': colony,
         'price': price,
         'area': area
@@ -74,9 +82,9 @@ if submit:
             st.info(f"⚠️ No exact match found — relaxed filters to show similar listings (used {filters_used} filters).")
         
         st.dataframe(recommendations[[  # Display relevant columns
-            'City', 'property Type', 'price', 'area', 'Bedrooms', 'Bathrooms',
-            'Parking Spaces', 'Kitchens', 'Store Rooms', 'Servant Quarters',
-            'Age Possession', 'colony'
+            'City', 'property_type', 'parking_spaces', 'Bedrooms', 'Bathrooms',
+            'servant_Quarters', 'Kitchens', 'store_rooms', 'price',
+            'age_possession', 'area', 'colony'
         ]].reset_index(drop=True))
     else:
         st.error("❌ Sorry! No properties found. Try changing your filters.")

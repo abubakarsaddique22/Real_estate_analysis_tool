@@ -20,7 +20,7 @@ except FileNotFoundError:
 
 # # Load Preprocessor
 try:
-    with open('models/preprocessor.pkl', 'rb') as f:
+    with open('models/final_data.pkl', 'rb') as f:
         df = pickle.load(f)  # Assuming it's a ColumnTransformer
 except FileNotFoundError:
     st.error("Preprocessor file not found. Ensure that 'models/preprocessor.pkl' exists.")

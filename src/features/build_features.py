@@ -95,7 +95,13 @@ def data_type_change(df: pd.DataFrame) -> pd.DataFrame:
         df['colony'] = df['colony'].astype('category')
         df['province'] = df['province'].astype('category')
         df['Parking Spaces'] = df['Parking Spaces'].astype('int')
+        df['Bedrooms'] = df['Bedrooms'].astype('int') 
+        df['Bathrooms'] = df['Bathrooms'].astype('int') 
+        df['Servant Quarters'] = df['Servant Quarters'].astype('int') 
+        df['Kitchens'] = df['Kitchens'].astype('int') 
+        df['Store Rooms'] = df['Store Rooms'].astype('int') 
         df['Age Possession'] = df['Age Possession'].astype('category')
+
         return df
     except Exception as e:
         logging.error("Error changing data types: %s", e)
@@ -140,14 +146,13 @@ def main():
         # just upper and lower case in property type column covert to Houses 
         df['property Type'].replace({'Upper':"Houses",'Lower':"Houses"},inplace=True)
         df=data_type_change(df)
+        print(df.dtypes)
         df=data_rename_columns(df)
 
         print(df.columns)
-        with open('models/preprocessor.pkl', 'wb') as f:
+        with open('models/final_data.pkl', 'wb') as f:
             pickle.dump(df, f)
 
-        # with open('df.pkl', 'wb') as file:
-        #    pickle.dump(X, file)
     #     # save data
         df.to_csv('data/processed/feature_selection.csv',index=False)
 
