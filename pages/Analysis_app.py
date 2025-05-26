@@ -16,7 +16,7 @@ st.title('Analytics')
 
 # # Load Preprocessor
 try:
-    with open('models/preprocessor.pkl', 'rb') as f:
+    with open('models/final_data.pkl', 'rb') as f:
         data = pickle.load(f)  # Assuming it's a ColumnTransformer
 except FileNotFoundError:
     st.error("Preprocessor file not found. Ensure that 'models/preprocessor.pkl' exists.")
@@ -59,115 +59,200 @@ st.pyplot(plt)  # ✅ Use this instead of plt.show()
 # 2. in this case if user select flats then second graph show
 
 st.header('Area Vs Price')
+city=st.selectbox("Select City",['Rawalpindi','Lahore','Karachi'],key='first_round_city')
+if city=='Rawalpindi':
+    property_type = st.selectbox('Select Property Type', ['flat','house'],key="feature_selectbox_1")
+    if property_type == 'house':
+        fig1 = px.scatter(data[(data['property_type'] == 'Houses') & (data['City']=='Rawalpindi')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
 
-property_type = st.selectbox('Select Property Type', ['flat','house'],key="feature_selectbox_1")
+        st.plotly_chart(fig1, use_container_width=True)
+    else:
+        fig1 = px.scatter(data[(data['property_type'] == 'Flats') & (data['City']=='Rawalpindi')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
 
-if property_type == 'house':
-    fig1 = px.scatter(data[data['property_type'] == 'Houses'], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+        st.plotly_chart(fig1, use_container_width=True)
 
-    st.plotly_chart(fig1, use_container_width=True)
-else:
-    fig1 = px.scatter(data[data['property_type'] == 'Flats'], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+elif city=='Lahore':
+    property_type = st.selectbox('Select Property Type', ['flat','house'],key="feature_selectbox_1")
 
-    st.plotly_chart(fig1, use_container_width=True)
+    if property_type == 'house':
+        fig1 = px.scatter(data[(data['property_type'] == 'Houses') &  (data['City']=='Lahore')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+
+        st.plotly_chart(fig1, use_container_width=True)
+    else:
+        fig1 = px.scatter(data[(data['property_type'] == 'Flats') &  (data['City']=='Lahore')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+
+        st.plotly_chart(fig1, use_container_width=True)
+
+elif city=='Karachi':
+    property_type = st.selectbox('Select Property Type', ['flat','house'],key="feature_selectbox_1")
+
+    if property_type == 'house':
+        fig1 = px.scatter(data[(data['property_type'] == 'Houses') &  (data['City']=='Karachi')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+
+        st.plotly_chart(fig1, use_container_width=True)
+    else:
+        fig1 = px.scatter(data[(data['property_type'] == 'Flats') &  (data['City']=='Karachi')], x="area", y="price", color="Bedrooms", title="Area Vs Price")
+
+        st.plotly_chart(fig1, use_container_width=True)
 
 
 
-
-
-# bedrooms and kitchen according to colony
+# bedrooms according to colony
 st.header('Bedrooms Pie Chart')
-select_colony = st.selectbox('Select colony',['overall','specific colony'],key="feature_selectbox_2")
-if select_colony == 'overall':
-    fig2 = px.pie(data, names='Bedrooms',title='Bedrooms vs colony')
+city = st.selectbox("Select City", ['Rawalpindi', 'Lahore', 'Karachi'], key='second_round_city')
+city_data = data[data['City'] == city]
+select_colony = st.selectbox('Select colony', ['overall', 'specific colony'], key="feature_selectbox_2")
 
+if select_colony == 'overall':
+    fig2 = px.pie(city_data, names='Bedrooms', title=f'Bedrooms Distribution in {city}')
     st.plotly_chart(fig2, use_container_width=True)
 else:
-    specific_colony=st.selectbox('select specific',sorted(data['colony'].unique().to_list()))
-    fig2 = px.pie(data[data['colony'] ==specific_colony], names='Bedrooms',title="Area Vs Price")
-
+    unique_colonies = sorted(city_data['colony'].dropna().unique())
+    specific_colony = st.selectbox('Select specific colony', unique_colonies)
+    
+    colony_data = city_data[city_data['colony'] == specific_colony]
+    fig2 = px.pie(colony_data, names='Bedrooms', title=f'{specific_colony}, {city}')
     st.plotly_chart(fig2, use_container_width=True)
+
+
+# kitchen according to colony
 
 
 st.header('Kitchens Pie Chart')
-select_kitchen = st.selectbox('Select colony',['overall','specific colony'],key="feature_selectbox_3")
-
+city = st.selectbox("Select City", ['Rawalpindi', 'Lahore', 'Karachi'], key='kitchen_city')
+city_data = data[data['City'] == city]
+select_kitchen = st.selectbox('Select colony', ['overall', 'specific colony'], key="feature_selectbox_3")
 if select_kitchen == 'overall':
-    fig2 = px.pie(data, names='Kitchens')
-
+    fig2 = px.pie(city_data, names='Kitchens', title=f'Kitchens Distribution in {city}')
     st.plotly_chart(fig2, use_container_width=True)
+
 else:
-    specific_colony=st.selectbox('select specific',sorted(data['colony'].unique().to_list()))
-    fig2 = px.pie(data[data['colony'] ==specific_colony], names='Kitchens')
-
+    unique_colonies = sorted(city_data['colony'].dropna().unique())
+    specific_colony = st.selectbox('Select specific colony', unique_colonies, key='kitchen_colony')
+    
+    colony_data = city_data[city_data['colony'] == specific_colony]
+    fig2 = px.pie(colony_data, names='Kitchens', title=f'Kitchens Distribution in {specific_colony}, {city}')
     st.plotly_chart(fig2, use_container_width=True)
 
 
 
 
 
-# average price by bedrooms and kitchens 
-st.header('Average Price By BK')
-select_BK = st.selectbox('Select Bk',['Bedrooms','Kitchens'],key="feature_selectbox_4")
 
-if select_BK=='Bedrooms':
-        # Calculate average price by bedrooms
-    avg_price_by_bedrooms = data.groupby('Bedrooms')['price'].mean().reset_index()
+# # average price by bedrooms and kitchens 
+# st.header('Average Price By BK')
+# select_BK = st.selectbox('Select Bk',['Bedrooms','Kitchens'],key="feature_selectbox_4")
+
+# if select_BK=='Bedrooms':
+#         # Calculate average price by bedrooms
+#     avg_price_by_bedrooms = data.groupby('Bedrooms')['price'].mean().reset_index()
+#     avg_price_by_bedrooms = avg_price_by_bedrooms[avg_price_by_bedrooms['Bedrooms'] >= 1]
+
+#     # Helper function to format price (Cr or Lakhs)
+#     def format_price(value):
+#         if value >= 1:
+#             return f"{value:.2f} Cr"  # Values ≥ 1 Cr
+#         else:
+#             return f"{value * 100:.0f} L"  # Values < 1 Cr (converted to Lakhs)
+
+#     # Apply formatting to display Cr/L
+#     avg_price_by_bedrooms['formatted_price'] = avg_price_by_bedrooms['price'].apply(format_price)
+
+#     # Bar Chart - Bedrooms vs. Average Price (with formatted hover)
+#     fig = px.bar(avg_price_by_bedrooms,
+#                 x='Bedrooms',
+#                 y='price',
+#                 title='Average Price by Number of Bedrooms',
+#                 labels={'price': 'Average Price (Cr/L)', 'Bedrooms': 'Number of Bedrooms'},
+#                 color='price',
+#                 color_continuous_scale='Viridis',
+#                 hover_data=['formatted_price'])
+
+#     # # Show chart
+#     st.plotly_chart(fig, use_container_width=True)
+# else:
+#     # Calculate average price by number of kitchens
+#     avg_price_by_kitchens = data.groupby('Kitchens')['price'].mean().reset_index()
+
+#     # Filter to exclude 0 kitchens and include only 1 or more
+#     avg_price_by_kitchens = avg_price_by_kitchens[avg_price_by_kitchens['Kitchens'] >= 1]
+
+#     # Helper function to format price (Cr or Lakhs)
+#     def format_price(value):
+#         if value >= 1:
+#             return f"{value:.2f} Cr"  # Values ≥ 1 Cr
+#         else:
+#             return f"{value * 100:.0f} L"  # Values < 1 Cr (converted to Lakhs)
+
+#     # Apply formatting to display Cr/L
+#     avg_price_by_kitchens['formatted_price'] = avg_price_by_kitchens['price'].apply(format_price)
+
+#     # Bar Chart - Kitchens vs. Average Price (with formatted hover)
+#     fig = px.bar(avg_price_by_kitchens,
+#                 x='Kitchens',
+#                 y='price',
+#                 title='Average Price by Number of Kitchens (1 and Above)',
+#                 labels={'price': 'Average Price (Cr/L)', 'Kitchens': 'Number of Kitchens'},
+#                 color='price',
+#                 color_continuous_scale='Viridis',
+#                 hover_data=['formatted_price'])
+
+#     # Show chart
+#     st.plotly_chart(fig, use_container_width=True)
+
+st.header('Average Price By Bedrooms/Kitchens')
+
+# Step 1: Select City
+selected_city = st.selectbox("Select City", ['Rawalpindi', 'Lahore', 'Karachi'], key="price_chart_city")
+
+# Step 2: Filter data by city
+city_data = data[data['City'] == selected_city]
+
+# Step 3: Choose between Bedrooms or Kitchens
+select_BK = st.selectbox('Group By', ['Bedrooms', 'Kitchens'], key="feature_selectbox_4")
+
+# Helper function to format price (Cr or Lakhs)
+def format_price(value):
+    if value >= 1:
+        return f"{value:.2f} Cr"
+    else:
+        return f"{value * 100:.0f} L"
+
+# Step 4A: Average Price by Bedrooms
+if select_BK == 'Bedrooms':
+    avg_price_by_bedrooms = city_data.groupby('Bedrooms')['price'].mean().reset_index()
     avg_price_by_bedrooms = avg_price_by_bedrooms[avg_price_by_bedrooms['Bedrooms'] >= 1]
-
-    # Helper function to format price (Cr or Lakhs)
-    def format_price(value):
-        if value >= 1:
-            return f"{value:.2f} Cr"  # Values ≥ 1 Cr
-        else:
-            return f"{value * 100:.0f} L"  # Values < 1 Cr (converted to Lakhs)
-
-    # Apply formatting to display Cr/L
     avg_price_by_bedrooms['formatted_price'] = avg_price_by_bedrooms['price'].apply(format_price)
 
-    # Bar Chart - Bedrooms vs. Average Price (with formatted hover)
-    fig = px.bar(avg_price_by_bedrooms,
-                x='Bedrooms',
-                y='price',
-                title='Average Price by Number of Bedrooms',
-                labels={'price': 'Average Price (Cr/L)', 'Bedrooms': 'Number of Bedrooms'},
-                color='price',
-                color_continuous_scale='Viridis',
-                hover_data=['formatted_price'])
-
-    # # Show chart
+    fig = px.bar(
+        avg_price_by_bedrooms,
+        x='Bedrooms',
+        y='price',
+        title=f'Average Price by Number of Bedrooms in {selected_city}',
+        labels={'price': 'Average Price (Cr/L)', 'Bedrooms': 'Number of Bedrooms'},
+        color='price',
+        color_continuous_scale='Viridis',
+        hover_data=['formatted_price']
+    )
     st.plotly_chart(fig, use_container_width=True)
+
+# Step 4B: Average Price by Kitchens
 else:
-    # Calculate average price by number of kitchens
-    avg_price_by_kitchens = data.groupby('Kitchens')['price'].mean().reset_index()
-
-    # Filter to exclude 0 kitchens and include only 1 or more
+    avg_price_by_kitchens = city_data.groupby('Kitchens')['price'].mean().reset_index()
     avg_price_by_kitchens = avg_price_by_kitchens[avg_price_by_kitchens['Kitchens'] >= 1]
-
-    # Helper function to format price (Cr or Lakhs)
-    def format_price(value):
-        if value >= 1:
-            return f"{value:.2f} Cr"  # Values ≥ 1 Cr
-        else:
-            return f"{value * 100:.0f} L"  # Values < 1 Cr (converted to Lakhs)
-
-    # Apply formatting to display Cr/L
     avg_price_by_kitchens['formatted_price'] = avg_price_by_kitchens['price'].apply(format_price)
 
-    # Bar Chart - Kitchens vs. Average Price (with formatted hover)
-    fig = px.bar(avg_price_by_kitchens,
-                x='Kitchens',
-                y='price',
-                title='Average Price by Number of Kitchens (1 and Above)',
-                labels={'price': 'Average Price (Cr/L)', 'Kitchens': 'Number of Kitchens'},
-                color='price',
-                color_continuous_scale='Viridis',
-                hover_data=['formatted_price'])
-
-    # Show chart
+    fig = px.bar(
+        avg_price_by_kitchens,
+        x='Kitchens',
+        y='price',
+        title=f'Average Price by Number of Kitchens in {selected_city}',
+        labels={'price': 'Average Price (Cr/L)', 'Kitchens': 'Number of Kitchens'},
+        color='price',
+        color_continuous_scale='Viridis',
+        hover_data=['formatted_price']
+    )
     st.plotly_chart(fig, use_container_width=True)
-
-
 
 
 
