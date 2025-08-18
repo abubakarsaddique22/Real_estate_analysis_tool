@@ -126,9 +126,8 @@ def create_pipeline() -> Pipeline:
             ],
             remainder='passthrough'
         )
-
-        # export the preprocessor.pkl file 
         
+        # make a model pipeline
 
         model_pipeline  = Pipeline([('preprocessor', preprocessor),
                              ('model', XGBRegressor(min_child_weight=2, 
